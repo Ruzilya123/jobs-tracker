@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+# ключ сервисного аккаунта Google — никогда не коммитим
+*service-account*.json
+google-key*.json
+
+# настройки IDE
+.idea/

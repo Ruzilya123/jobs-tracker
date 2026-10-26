@@ -1,0 +1,37 @@
+name: sync
+
+# Каждые 10 минут: сообщения боту + письма hh.ru/Хабра → Google Таблица, утром — дайджест.
+# В публичном репозитории минуты GitHub Actions бесплатны без лимита.
+# В приватном (2000 мин/мес) поставьте '*/30 * * * *'.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - run: npm run sync
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.gmail.com' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
+          LETTER_VARIANTS: ${{ vars.LETTER_VARIANTS || 'real-time,legacy,общее' }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          TZ_NAME: Asia/Yekaterinburg

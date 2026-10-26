@@ -1,0 +1,34 @@
+{
+  "name": "job-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Автоматический трекер откликов: письма hh.ru/Хабр Карьеры + Telegram-бот → Google Таблица → дашборд",
+  "type": "module",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "check": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts check",
+    "setup": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts setup",
+    "sync": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts sync",
+    "dev": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts dev",
+    "digest": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts digest",
+    "email:check": "node --env-file-if-exists=.env --import tsx sync/src/cli.ts email:check",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "dashboard:install": "npm --prefix dashboard install",
+    "dashboard:dev": "npm --prefix dashboard run dev",
+    "dashboard:build": "npm --prefix dashboard run build"
+  },
+  "dependencies": {
+    "imapflow": "^1.0.191",
+    "mailparser": "^3.7.4",
+    "tsx": "^4.20.3"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
