@@ -22,16 +22,39 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Проверка настроек (значения не выводятся)
+        run: |
+          check() { if [ -n "$2" ]; then echo "✓ $1"; else echo "✗ $1 — пусто: GitHub не видит этот ключ"; fi; }
+          check GOOGLE_SERVICE_ACCOUNT_JSON "$GOOGLE_SERVICE_ACCOUNT_JSON"
+          check SPREADSHEET_ID "$SPREADSHEET_ID"
+          check IMAP_USER "$IMAP_USER"
+          check IMAP_PASSWORD "$IMAP_PASSWORD"
+          check TELEGRAM_BOT_TOKEN "$TELEGRAM_BOT_TOKEN"
+          check TELEGRAM_OWNER_ID "$TELEGRAM_OWNER_ID"
+          echo "Ключи должны лежать в Settings → Secrets and variables → Actions → вкладка Secrets → Repository secrets."
+        env:
+          # secrets — основное место; vars — запасной вариант, если ключ случайно добавили во вкладку Variables
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON || vars.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID || vars.SPREADSHEET_ID }}
+          IMAP_USER: ${{ secrets.IMAP_USER || vars.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD || vars.IMAP_PASSWORD }}
+          IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.gmail.com' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN || vars.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID || vars.TELEGRAM_OWNER_ID }}
+          LETTER_VARIANTS: ${{ vars.LETTER_VARIANTS || 'real-time,legacy,общее' }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+          TZ_NAME: Asia/Yekaterinburg
       - run: npm ci --omit=dev --no-audit --no-fund
       - run: npm run sync
         env:
-          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
-          IMAP_USER: ${{ secrets.IMAP_USER }}
-          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          # secrets — основное место; vars — запасной вариант, если ключ случайно добавили во вкладку Variables
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON || vars.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID || vars.SPREADSHEET_ID }}
+          IMAP_USER: ${{ secrets.IMAP_USER || vars.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD || vars.IMAP_PASSWORD }}
           IMAP_HOST: ${{ vars.IMAP_HOST || 'imap.gmail.com' }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN || vars.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_ID: ${{ secrets.TELEGRAM_OWNER_ID || vars.TELEGRAM_OWNER_ID }}
           LETTER_VARIANTS: ${{ vars.LETTER_VARIANTS || 'real-time,legacy,общее' }}
           DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
           TZ_NAME: Asia/Yekaterinburg

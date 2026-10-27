@@ -45,9 +45,9 @@ export const hasTelegram = () => Boolean(config.telegram.token);
 
 export function requireSheets() {
   if (!config.google || !config.spreadsheetId) {
-    throw new Error(
-      'Не настроена Google Таблица: нужны GOOGLE_SERVICE_ACCOUNT_JSON (или _FILE) и SPREADSHEET_ID. См. README, шаг 1.',
-    );
+    // значения не выводим — логи GitHub Actions публичные
+    const missing = [!config.google && 'GOOGLE_SERVICE_ACCOUNT_JSON (или _FILE)', !config.spreadsheetId && 'SPREADSHEET_ID'].filter(Boolean);
+    throw new Error(`Не настроена Google Таблица: пусто — ${missing.join(', ')}.`);
   }
   return { sa: config.google, id: config.spreadsheetId };
 }
